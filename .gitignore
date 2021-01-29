@@ -1,0 +1,5 @@
+# Ignore files
+Source_code/*.exe
+Source_code/*.o
+Source_code/build/*
+Source_code/vsdebug/*
