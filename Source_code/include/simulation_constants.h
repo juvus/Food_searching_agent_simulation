@@ -11,7 +11,7 @@ File with the different simulation global constants.
 #include <utils.h>
 
 /* Colors constant for simulation appearence */
-#define BKG_COLOR 0xadcfff  /* Background color */
+#define BKG_COLOR 0xe0e0e0  /* Background color of the main window */
 
 /* Define the simulation initial constants */
 #define WINDOW_WIDTH 1024  /* Main window width */
