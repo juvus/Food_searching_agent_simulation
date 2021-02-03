@@ -31,7 +31,7 @@ void dconsole_init(DConsole_t *dconsole, u32 x, u32 y, u32 width);
 void dconsole_add_message(DConsole_t *dconsole, char *msg_str, u32 color);
 
 /* Function to delete the all messages */
-void sconsole_clear_messages(DConsole_t *dconsole);
+void dconsole_clear_messages(DConsole_t *dconsole);
 
 /* Function to clear the console from the all messages */
 void dconsole_clear_console(DConsole_t *dconsole, Render_Buffer_t *render_buffer);

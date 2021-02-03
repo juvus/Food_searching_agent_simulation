@@ -40,7 +40,7 @@ Data: $(DDIR)
 #==============================================================================================
 
 # Module for the win32 platform (creating the window with win32API)
-_DEPS_win32_platform = utils.h simulation.h input_treatment.h
+_DEPS_win32_platform = utils.h simulation.h input_treatment.h simulation_constants.h
 DEPS_win32_platform = $(patsubst %,$(IDIR)/%,$(_DEPS_win32_platform))
 
 # Module for the work with input treatment (from mouse and keyboard):
@@ -48,53 +48,29 @@ _DEPS_input_treatment = input_treatment.h utils.h
 DEPS_input_treatment = $(patsubst %,$(IDIR)/%,$(_DEPS_input_treatment))
 
 # Module for the software rendering functions
-_DEPS_software_rendering = software_rendering.h utils.h file_io.h
+_DEPS_software_rendering = software_rendering.h utils.h file_io.h simulation_constants.h
 DEPS_software_rendering = $(patsubst %,$(IDIR)/%,$(_DEPS_software_rendering))
 
 # Module for the file_io (working with files)
-_DEPS_file_io = file_io.h utils.h
+_DEPS_file_io = file_io.h utils.h stb_image.h
 DEPS_file_io = $(patsubst %,$(IDIR)/%,$(_DEPS_file_io))
 
 # Module for the font
-_DEPS_font = font.h utils.h file_io.h software_rendering.h 
+_DEPS_font = font.h utils.h file_io.h software_rendering.h simulation_constants.h
 DEPS_font = $(patsubst %,$(IDIR)/%,$(_DEPS_font))
 
 # Module for the misc functions
-_DEPS_misc = utils.h
+_DEPS_misc = misc.h utils.h
 DEPS_misc = $(patsubst %,$(IDIR)/%,$(_DEPS_misc))
 
-# Module for the world class
-_DEPS_world = world.h utils.h software_rendering.h
-DEPS_world = $(patsubst %,$(IDIR)/%,$(_DEPS_world))
-
-# Module for the text_panel class
-_DEPS_text_panel = text_panel.h utils.h software_rendering.h world.h font.h box.h
-DEPS_text_panel = $(patsubst %,$(IDIR)/%,$(_DEPS_text_panel))
-
-# Module for the box class
-_DEPS_box = box.h utils.h world.h circles_list.h software_rendering.h
-DEPS_box = $(patsubst %,$(IDIR)/%,$(_DEPS_box))
-
-# Module for the circle class
-_DEPS_circle = circle.h utils.h misc.h software_rendering.h
-DEPS_circle = $(patsubst %,$(IDIR)/%,$(_DEPS_circle))
-
-# Module for the circles_list class
-_DEPS_circles_list = circles_list.h circle.h utils.h misc.h
-DEPS_circles_list = $(patsubst %,$(IDIR)/%,$(_DEPS_circles_list))
-
-# Module for the pso_algorithm class
-_DEPS_pso_algorithm = pso_algorithm.h utils.h circle.h circles_list.h box.h misc.h
-DEPS_pso_algorithm = $(patsubst %,$(IDIR)/%,$(_DEPS_pso_algorithm))
-
 # Module for the simualtion class
-_DEPS_simualtion = simulation.h software_rendering.h utils.h file_io.h font.h misc.h \
-world.h box.h text_panel.h circle.h circles_list.h pso_algorithm.h
+_DEPS_simualtion = simulation.h software_rendering.h utils.h input_treatment.h file_io.h \
+font.h dbg.h debug_console.h simulation_constants.h
 DEPS_simualtion = $(patsubst %,$(IDIR)/%,$(_DEPS_simualtion))
 
-# Module for the sort_array class
-_DEPS_sort_array = sort_array.h 
-DEPS_sort_array = $(patsubst %,$(IDIR)/%,$(_DEPS_sort_array))
+# Module for the debug console
+_DEPS_debug_console = debug_console.h utils.h software_rendering.h font.h simulation_constants.h
+DEPS_debug_console = $(patsubst %,$(IDIR)/%,$(_DEPS_debug_console))
 
 #==============================================================================================
 # Rules for compilation of the object *.o files:
@@ -107,14 +83,12 @@ $(ODIR)/%.o: $(SDIR)/%.c $(DEPS_%)
 # Rules for the linker:
 #==============================================================================================
 
-_OBJ = win32_platform.o input_treatment.o software_rendering.o file_io.o font.o misc.o world.o \
-text_panel.o box.o circle.o circles_list.o pso_algorithm.o simulation.o sort_array.o 
+_OBJ = win32_platform.o input_treatment.o software_rendering.o file_io.o font.o misc.o \
+simulation.o debug_console.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 Program: $(OBJ)
 	$(CC) $(LFLAGS) $(EDIR)/$@ $^ -L$(LDIR) $(LIBS)
-	ctags -f ./TAGS -e -R ./include ./src
-	ctags -f ./src/TAGS -e -R ./include ./src
 # use flag -s for stipping the executable (to reduce the size)
 
 #==============================================================================================

@@ -3,10 +3,10 @@
 /*================================================================================*/
 
 #define _USE_MATH_DEFINES
+#include <misc.h>
 #include <utils.h>
 #include <stdlib.h>
 #include <math.h>
-#include <file_io.h>
 
 f32
 trim(f32 value, f32 low_bnd, f32 hight_bnd)
