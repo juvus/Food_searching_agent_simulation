@@ -1,11 +1,22 @@
+/*
+===============================================================================
+Set of functions for the software rendering routins. Definition of
+the functions.
+===============================================================================
+*/
+
 #define _USE_MATH_DEFINES
 
-#include <utils.h>
+/* Standard includes: */
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
+
+/* Program includes: */
+#include <utils.h>
 #include <file_io.h>
 #include <software_rendering.h>
+#include <simulation_constants.h>
 
 /* Static (global in the file) variables and data structures */
 static u32 LSX_array[WINDOW_WIDTH]; /* Left Side X array */
@@ -13,53 +24,20 @@ static u32 RSX_array[WINDOW_WIDTH]; /* Rigth Side X array */
 static u32 LSX_i = 0; /* Left Side X array index */
 static u32 RSX_i = 0; /* Right Side X array index */
 
-/* Static functions */
+/* Static function declaration: */
+/* Function for drawing a line with extended parameters */
 static void draw_line_extended(V2_u32_t v0, V2_u32_t v1, u32 color, Render_Buffer_t *render_buffer,
-                               u32 *SX_array, u32 *SX_i);
-static void draw_fill_bottom_flat_triangle(V2_u32_t v1, V2_u32_t v2, V2_u32_t v3, u32 color,
-                                          Render_Buffer_t *render_buffer);
-static void draw_fill_top_flat_triangle(V2_u32_t v1, V2_u32_t v2, V2_u32_t v3, u32 color,
-                                        Render_Buffer_t *render_buffer);
-u32 convert_RGBA_to_ARGB(u32 color);
-u32 get_gray_color(u8 value);
+    u32 *SX_array, u32 *SX_i);
 
-/* Manually defined image of digits consisting of large pixels */
-static const u8 DIGITS[11][7][5] =
-    {
-     /* Digit 0: */
-     {{0, 1, 1, 1, 0}, {1, 1, 0, 0, 1}, {1, 1, 0, 0, 1}, {1, 1, 0, 0, 1},
-      {1, 1, 0, 0, 1}, {1, 1, 0, 0, 1}, {0, 1, 1, 1, 0}},
-     /* Digit 1: */
-     {{0, 1, 1, 0, 0}, {1, 1, 1, 0, 0}, {0, 1, 1, 0, 0}, {0, 1, 1, 0, 0},
-      {0, 1, 1, 0, 0}, {0, 1, 1, 0, 0}, {1, 1, 1, 1, 0}},
-     /* Digit 2: */
-     {{0, 1, 1, 1, 0}, {1, 0, 0, 1, 1}, {0, 0, 0, 1, 1}, {0, 0, 1, 1, 0},
-      {0, 1, 1, 0, 0}, {1, 1, 0, 0, 1}, {1, 1, 1, 1, 1}},
-     /* Digit 3: */
-     {{0, 1, 1, 1, 0}, {1, 0, 0, 1, 1}, {0, 0, 0, 1, 1}, {0, 1, 1, 1, 0},
-      {0, 0, 0, 1, 1}, {1, 0, 0, 1, 1}, {0, 1, 1, 1, 0}},
-     /* Digit 4: */
-     {{1, 0, 0, 1, 1}, {1, 0, 0, 1, 1}, {1, 0, 0, 1, 1}, {1, 1, 1, 1, 1},
-      {0, 0, 0, 1, 1}, {0, 0, 0, 1, 1}, {0, 0, 0, 1, 1}},
-     /* Digit 5: */
-     {{1, 1, 1, 1, 1}, {1, 0, 0, 0, 0}, {1, 0, 0, 0, 0}, {1, 1, 1, 1, 1},
-      {0, 0, 0, 1, 1}, {1, 0, 0, 1, 1}, {1, 1, 1, 1, 1}},
-     /* Digit 6: */
-     {{1, 1, 1, 1, 1}, {1, 1, 0, 0, 0}, {1, 1, 0, 0, 0}, {1, 1, 1, 1, 1},
-      {1, 1, 0, 0, 1}, {1, 1, 0, 0, 1}, {1, 1, 1, 1, 1}},
-     /* Digit 7: */
-     {{1, 1, 1, 1, 1}, {0, 0, 0, 1, 1}, {0, 0, 1, 1, 0}, {0, 0, 1, 1, 0},
-      {0, 0, 1, 1, 0}, {0, 1, 1, 0, 0}, {0, 1, 1, 0, 0}},
-     /* Digit 8: */
-     {{1, 1, 1, 1, 1}, {1, 1, 0, 0, 1}, {1, 1, 0, 0, 1}, {1, 1, 1, 1, 1},
-      {1, 1, 0, 0, 1}, {1, 1, 0, 0, 1}, {1, 1, 1, 1, 1}},
-     /* Digit 9: */
-     {{1, 1, 1, 1, 1}, {1, 1, 0, 0, 1}, {1, 1, 0, 0, 1}, {1, 1, 1, 1, 1},
-      {0, 0, 0, 0, 1}, {1, 0, 0, 0, 1}, {1, 1, 1, 1, 1}},
-     /* Symbol x */
-     {{0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}, {0, 1, 0, 1, 0}, {0, 0, 1, 0, 0},
-      {0, 1, 0, 1, 0}, {0, 0, 0, 0, 0}, {0, 0, 0, 0, 0}},
-    };
+/* Function for drawing a colored bottom-flat triangle */
+static void draw_fill_bottom_flat_triangle(V2_u32_t v1, V2_u32_t v2, V2_u32_t v3, u32 color,
+    Render_Buffer_t *render_buffer);
+
+/* Function for drawing a colored top-flat triangle */
+static void draw_fill_top_flat_triangle(V2_u32_t v1, V2_u32_t v2, V2_u32_t v3, u32 color,
+    Render_Buffer_t *render_buffer);
+
+/* Software rendering functions defininitions: */
 
 void
 clear_full_screen(u32 color, Render_Buffer_t *render_buffer)
@@ -418,8 +396,6 @@ draw_circle(u32 x0, u32 y0, u32 radius, b32 is_filled ,u32 color, Render_Buffer_
     }   
 }
 
-
-
 void draw_rotated_rect(u32 x0, u32 y0, u32 width, u32 height, f32 angle, u32 color,
                        Render_Buffer_t *render_buffer)
 {
@@ -464,69 +440,6 @@ void draw_rotated_rect(u32 x0, u32 y0, u32 width, u32 height, f32 angle, u32 col
     /* Draw the rectangle (by drawing two triangles) */
     draw_fill_triangle(BL_tr, BR_tr, UR_tr, color, render_buffer);
     draw_fill_triangle(BL_tr, UL_tr, UR_tr, color, render_buffer);        
-}
-
-void
-draw_digit(u32 x, u32 y, u8 digit, u32 size, u32 color, Render_Buffer_t *render_buffer)
-{
-    /* Function for drawing a single digit symbol
-       x - x position of the BL corner of the box
-       y - y position of the BL corner of the box
-       digit - digit to draw (0 - 9)
-       size - size of the "pixels of a drawing". size = 1 representing normal pixels
-       color - color of the digit
-       render_buffer - render buffer with pixels */
-
-    u32 i, j, x_pos, y_pos;
-    
-    for (i = 0; i < 7; ++i) {
-        for (j = 0; j < 5; ++j) {
-            /* Calculate the possition taking into account the with of large pixels */
-            x_pos = x + j * size;
-            y_pos = y + i * size;
-
-            /* Draw the digit 0 - 9 */
-            if (DIGITS[digit][6 - i][j]) {
-                    draw_rect(x_pos, y_pos, size, size, color, render_buffer);
-            }            
-        }
-    }
-}
-
-void
-draw_number(u32 x, u32 y, u32 number, u32 size, u32 color, Render_Buffer_t *render_buffer)
-{
-    /* Function for drawing an insigned int number with pixelized digits
-       x - x position of the BL corner of the box
-       y - y position of the BL corner of the box
-       number - number to draw (of the unsigned int 32 bit type) 
-       size - size of the "pixels of a drawing". size = 1 representing normal pixels
-       color - color of the digit
-       render_buffer - render buffer with pixels */
-
-    u32 digits_array[10] = {0};
-    u32 i, x_pos, y_pos;
-    u32 temp_number;
-
-    /* Create the array of number digits */
-    temp_number = number;
-    for (i = 0; i < 10; ++i) {
-        digits_array[9 - i] = temp_number % 10;
-        temp_number = (u32)(temp_number / 10); 
-    }
-
-    /* Draw the number digit by digit */
-    x_pos = x;
-    y_pos = y;
-    for (i = 0; i < 10; ++i) {
-        if ((i != 0) && (digits_array[i - 1] == 1)) {
-            /* After digit "1" indent should be one size smaller */
-            x_pos += size * 5;
-        } else {
-            x_pos += size * 6;
-        }
-        draw_digit(x_pos, y_pos, digits_array[i], size, color, render_buffer);
-    }
 }
 
 void

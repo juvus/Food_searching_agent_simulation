@@ -9,14 +9,7 @@
 #include <assert.h>
 #include <stdlib.h>
 #include <font.h>
-
-/* Global static variables */
-extern u32 DCONSOLE_MESSAGES; /* Amount of the debug messages in debug console */
-extern u32 DCONSOLE_MAX_MSG_LENGTH; /* Maximum message length */
-extern u32 DCONSOLE_BKG_COLOR; /* Background color of the debug console */
-extern u32 DCONSOLE_BRD_COLOR; /* Console boarders color */
-extern u32 DCONSOLE_MARGINS; /* Top, left, bottom and right margins */
-extern u32 BKG_COLOR; /* Background color */
+#include <simulation_constants.h>
 
 /* Realization of the interface functions */
 void
@@ -58,7 +51,7 @@ dconsole_add_message(DConsole_t *dconsole, char *msg_str, u32 color)
 
     u32 index = dconsole->message_index;
     dconsole->messages[index].color = color;
-    strcpy(dconsole->messages[index].msg_str, msg_str);
+    strcpy_s(dconsole->messages[index].msg_str, DCONSOLE_MAX_MSG_LENGTH, msg_str);
     dconsole->message_index++;
     
     /* For safe in case of adding more messages than possible to store */
@@ -68,7 +61,7 @@ dconsole_add_message(DConsole_t *dconsole, char *msg_str, u32 color)
 }
 
 void
-sconsole_clear_messages(DConsole_t *dconsole)
+dconsole_clear_messages(DConsole_t *dconsole)
 {
     /* Function to delete the all messages */
 

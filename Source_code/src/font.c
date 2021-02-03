@@ -6,10 +6,7 @@
 #include <file_io.h>
 #include <font.h>
 #include <software_rendering.h>
-
-/* Global static variables */
-extern u32 SYM_ROWS; /* Amount of symbol rows in font.png */
-extern u32 SYM_COLS; /* Amount of sumbol columns in font.png */
+#include <simulation_constants.h>
 
 /* Realization of the interface functions */
 void

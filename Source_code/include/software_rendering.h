@@ -1,6 +1,13 @@
+/*
+===============================================================================
+Declaration of the software rendering class data structures and methods
+===============================================================================
+*/
+
 #ifndef SOFTWARE_RENDERING_H_
 #define SOFTWARE_RENDERING_H_
 
+/* Program includes: */
 #include <utils.h>
 #include <file_io.h>
 
@@ -46,14 +53,6 @@ void draw_circle(u32 x0, u32 y0, u32 radius, b32 is_filled ,u32 color, Render_Bu
 
 /* Function for drawing the arena margins */
 void draw_arena_margins(u32 color, f32 top, f32 right, f32 bottom, f32 left, Render_Buffer_t *render_buffer);
-
-/* Function for drawing a single digit symbol */
-/* @ Rewise later */
-void draw_digit(u32 x, u32 y, u8 digit, u32 size, u32 color, Render_Buffer_t *render_buffer);
-
-/* Function for drawing an insigned int number with pixelized digits */
-/* @ Rewise later */
-void draw_number(u32 x, u32 y, u32 number, u32 size, u32 color, Render_Buffer_t *render_buffer);
 
 /* Function for rendering the loaded png image */
 void draw_bitmap(u32 x, u32 y, Loaded_img_t* image, u32 scale, Render_Buffer_t *render_buffer);

@@ -20,12 +20,6 @@ typedef double f64;
 #define true 1
 #define false 0
 
-#define WINDOW_WIDTH 1280
-#define WINDOW_HEIGHT 720
-
-// Macro to suppress "unused function parameter"
-#define UNUSED(x) (void)(x)
-
 /* Vector of 2 f32 elements */
 struct V2_f32 {
     union {

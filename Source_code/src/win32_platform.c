@@ -13,15 +13,14 @@ Win32 platform with code for creation window and main game loop
 
 /* Program includes: */
 #include <utils.h>
-#include <sound_buffer.h>
-#include <game.h>
+#include <simulation.h>
 #include <input_treatment.h>
+#include <simulation_constants.h>
 
 /* Other variables */
 static HWND window; /* Handle to the main game window */
-static b32 is_running = true;  /* Flag for the game running indication */
+static b32 is_running = true;  /* Flag for the simulation running indication */
 static Render_Buffer_t render_buffer;  /* Buffer for the whole window image */
-static Sound_buffer_t sound_buffer;  /* Buffer for the audio stream */
 static Input_t user_input = {0};  /* Structure storing the user input data */
 static RECT rect;  /* Rectangle with game screen coordinates */
 static HDC hdc = NULL;  /* Handle to the drawing content */
@@ -32,8 +31,9 @@ static b32 is_down;  /* Flag that a buttin is currently down */
 static POINT mouse_pointer;  /* Structure containing mouse pointer coordinates */
 
 /* Static functions */
-/* Function for the thread of main game loop */
-static DWORD WINAPI game_main_loop_proc(void *worker_data);
+/* Function for the thread of main simulation loop */
+static DWORD WINAPI simulation_main_loop_proc(void *worker_data);
+
 /* Function for window messages processing */
 static LRESULT CALLBACK window_callback(HWND window, UINT message, WPARAM w_param, LPARAM l_param);
 
@@ -44,22 +44,22 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow
     /* Entry point for the windows application */
     /* Avoid warning messages about not used function parameters */
 
-    UNUSED(hPrevInstance);
-    UNUSED(lpCmdLine);
-    UNUSED(nShowCmd);  
+    UNREFERENCED_PARAMETER(hPrevInstance);
+    UNREFERENCED_PARAMETER(lpCmdLine);
+    UNREFERENCED_PARAMETER(nShowCmd);
 
     /* Create a window class */
     WNDCLASSA window_class = {0};
-    window_class.style = CS_HREDRAW|CS_VREDRAW;
+    window_class.style = CS_HREDRAW | CS_VREDRAW;
     window_class.lpfnWndProc = window_callback;
-    window_class.lpszClassName = "Game";
+    window_class.lpszClassName = "Simulation";
 
     /* Register the window class (as ANSI window) */
     RegisterClassA(&window_class);
 
     /* Create a window and return a window handle */
     DWORD dwStyle = WS_VISIBLE | WS_OVERLAPPED | WS_BORDER | WS_CAPTION | WS_SYSMENU;
-    window = CreateWindowExA(0, window_class.lpszClassName, "Game", dwStyle,
+    window = CreateWindowExA(0, window_class.lpszClassName, "Simulation", dwStyle,
         CW_USEDEFAULT, CW_USEDEFAULT, WINDOW_WIDTH, WINDOW_HEIGHT, 0, 0, 0, 0);
        
     /* Check if the window was successfully created */
@@ -70,11 +70,8 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow
     /* Get the drawing content of the created window */
     hdc = GetDC(window);
 
-    /* Initialization of the audio buffer */
-    sound_buffer_init(window, &sound_buffer);
-
     /* Game update and render loop (as a separate thread) */  
-    CreateThread(0, 0, game_main_loop_proc, NULL, 0, 0);
+    CreateThread(0, 0, simulation_main_loop_proc, NULL, 0, 0);
     
     /* Window message processing loop */
     while ((GetMessageA(&message, window, 0, 0)) && (is_running))
@@ -115,7 +112,7 @@ window_callback(HWND window, UINT message, WPARAM w_param, LPARAM l_param)
 
             /* Memory allocation with windows layer VirtualAlloc function */
             SIZE_T mem_size = sizeof(u32) * render_buffer.width * render_buffer.height;
-            render_buffer.pixels = VirtualAlloc(0, mem_size, MEM_COMMIT|MEM_RESERVE, PAGE_READWRITE);
+            render_buffer.pixels = VirtualAlloc(0, mem_size, MEM_COMMIT | MEM_RESERVE, PAGE_READWRITE);
 
             /* Fill the bitmap_info structure */
             render_buffer.bitmap_info.bmiHeader.biSize = sizeof(render_buffer.bitmap_info.bmiHeader);
@@ -163,25 +160,23 @@ window_callback(HWND window, UINT message, WPARAM w_param, LPARAM l_param)
 
 
 static DWORD WINAPI 
-game_main_loop_proc(void *worker_data)
+simulation_main_loop_proc(void *worker_data)
 {
-    
+    /* Function for the thread of main simulation loop */
 
     while (is_running)
     {
         /* Game simulation procedure */
-        simulate_game_tick(&user_input, &render_buffer, &sound_buffer);
+        simulation_calculate_tick(&user_input, &render_buffer);
 
         /* Render the calculated bitmap */
         StretchDIBits(hdc, 0, 0, (int)render_buffer.width, (int)render_buffer.height, 0, 0,
         (int)render_buffer.width, (int)render_buffer.height, render_buffer.pixels,
         &render_buffer.bitmap_info, DIB_RGB_COLORS, SRCCOPY);
-        
-        
-
-        //Sleep(0);
+        Sleep(100);
     }  
+
      /* Free the memory */
     VirtualFree(render_buffer.pixels, 0, MEM_RELEASE);
-    return 0; 
+    return 0;
 }
