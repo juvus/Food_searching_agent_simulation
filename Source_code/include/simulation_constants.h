@@ -16,10 +16,16 @@ File with the different simulation global constants.
 /* Define the simulation initial constants */
 #define WINDOW_WIDTH 1024  /* Main window width */
 #define WINDOW_HEIGHT 768  /* Main window height */
+#define PADDING_WIDTH 10  /* Width of the padding between different pannels */
 
 /* Font constants */
 #define SYM_ROWS 6  /* Amount of symbol rows in font.png */
 #define SYM_COLS 20  /* Amount of sumbol columns in font.png */
+
+/* Constants for the field object */
+#define FIELD_BRD_WIDTH 1  /* Width of the field border */
+#define FIELD_BKG_COLOR 0xffffff  /* Background color of the field */
+#define FIELD_BRD_COLOR 0x707070  /* Color of the field boarders */
 
 /* Constants for the debug console */
 #define DCONSOLE_MESSAGES 10  /* Amount of the debug messages in debug console */

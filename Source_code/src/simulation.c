@@ -26,6 +26,7 @@ Definition of the simulation class methods. Main logic loop of the simulation.
 #include <simulation_constants.h>
 
 /* Simulation classes */
+#include <field.h>
 //#include <arena.h> inclides for the simulation objects
 #include <misc.h>
 
@@ -47,6 +48,7 @@ static LONGLONG end;  /* Variable for dtime calculation */
 static LONGLONG frequency;  /* Variable for dtime calculation */
 
 /* Define different game variables */
+static Field_t *field;  /* Pointer to the field object */
 //static Agent_t agent; /* Structure of the searching agent */
 static f32 x, y; /* Temporary coordinates */
 static u32 i, j, k; /* Temporary indexes */
@@ -86,6 +88,7 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
         case SIM_ST_MEMORY_ALLOCATION: 
         {
             font_symbols = (Symbol_data_t *) calloc (SYM_ROWS * SYM_COLS, sizeof(Symbol_data_t));       
+            field = field_constructor();
 
             /* Jump to the simulation initialization state */
             simulation_state = SIM_ST_INITIALIZATION;
@@ -101,8 +104,12 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
             /* Prepare the font to use */
             font_extract_symbols(font_symbols, &font_img);
         
+            /* Initialization of the different simulation objects */
+            field_init(field, render_buffer);
+            
             /* Initial render of game elements: */
             clear_full_screen(BKG_COLOR, render_buffer);
+            field_render(field, render_buffer);
 
             /* Initialization of the debug console */
             dconsole_init(&dconsole, 50, 100, 300);
