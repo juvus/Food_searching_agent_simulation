@@ -41,7 +41,7 @@ static Loaded_img_t font_img;  /* Image with font symbols */
 static Simulation_t simulation = {0};  /* Simulation object */
 static Simulation_State_t simulation_state = SIM_ST_LOAD_RESOURCES;  /* Simulation state */
 static DConsole_t dconsole;  /* Debug console with messages */
-static Symbol_data_t *font_symbols;  /* Pointer to the array of all font symbols */
+static Font_t *font;  /* Pointer to the font */
 static LARGE_INTEGER begin_counter;  /* Union for for dtime calculation */
 static LARGE_INTEGER end_counter;  /* Union for for dtime calculation */
 static LARGE_INTEGER frequency_counter;  /* Union for for dtime calculation */
@@ -91,7 +91,8 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
         /* State for dynamic allocation of different objects for the simulation */
         case SIM_ST_MEMORY_ALLOCATION: 
         {
-            font_symbols = (Symbol_data_t *) calloc (SYM_ROWS * SYM_COLS, sizeof(Symbol_data_t));       
+            /* Set of object constructors */       
+            font = font_constructor();
             field_panel = field_panel_constructor();
             info_panel = info_panel_constructor();
             plot_panel = plot_panel_constructor();
@@ -108,7 +109,7 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
             srand(time(NULL));      
 
             /* Prepare the font to use */
-            font_extract_symbols(font_symbols, &font_img);
+            font_init(font, &font_img);
         
             /* Initialization of the different simulation objects */
             field_panel_init(field_panel, render_buffer);
@@ -117,7 +118,7 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
             
             /* Initial render of game elements: */
             clear_full_screen(BKG_COLOR, render_buffer);
-            field_panel_render(field_panel, render_buffer);
+            field_panel_render(field_panel, font, render_buffer);
             info_panel_render(info_panel, render_buffer);
             plot_panel_render(plot_panel, render_buffer);
 
@@ -147,7 +148,7 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
             dconsole_add_message(&dconsole, dconsole.str_buffer, 0xff0000);
             sprintf_s(dconsole.str_buffer, DCONSOLE_MAX_MSG_LENGTH, "%s%5.3lf", "FPS: ", (1.0f / dtime_orig));
             dconsole_add_message(&dconsole, dconsole.str_buffer, 0xff0000);
-            dconsole_render(&dconsole, font_symbols, render_buffer);
+            dconsole_render(&dconsole, font, render_buffer);
             
             /* Some simulation logic code here */
 

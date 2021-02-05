@@ -40,6 +40,6 @@ void dconsole_clear_console(DConsole_t *dconsole, Render_Buffer_t *render_buffer
 void dconsole_hide(DConsole_t *dconsole, Render_Buffer_t *render_buffer);
 
 /* Function to render the console with all messages */
-void dconsole_render(DConsole_t *dconsole, Symbol_data_t *font_symbols, Render_Buffer_t *render_buffer);
+void dconsole_render(DConsole_t *dconsole, Font_t *font, Render_Buffer_t *render_buffer);
 
 #endif // DEBUG_CONSOLE_H_

@@ -16,6 +16,7 @@ Description: Definition of the Field_Panel class member functions.
 #include <utils.h>
 #include <simulation_constants.h>
 #include <software_rendering.h>
+#include <font.h>
 
 Field_Panel_t*
 field_panel_constructor(void)
@@ -45,6 +46,8 @@ void
 field_panel_init(Field_Panel_t *field_panel, Render_Buffer_t *render_buffer)
 {
     /* Initialization of the Field_Panel object */
+    sprintf_s(field_panel->caption, FIELD_PANEL_MAX_CAPTION_LENGTH, "%s", "Field panel");
+    
     field_panel->height = render_buffer->height - PADDING_WIDTH * 2;
     field_panel->width = field_panel->height;
     field_panel->bkg_color = FIELD_PANEL_BKG_COLOR;
@@ -59,7 +62,7 @@ field_panel_init(Field_Panel_t *field_panel, Render_Buffer_t *render_buffer)
 }
 
 void
-field_panel_render(Field_Panel_t *field_panel, Render_Buffer_t *render_buffer)
+field_panel_render(Field_Panel_t *field_panel, Font_t *font, Render_Buffer_t *render_buffer)
 {
     /* Method for render the Field_Panel object in the window */
     u32 x, y;  /* Temporary coordinates */
@@ -72,4 +75,10 @@ field_panel_render(Field_Panel_t *field_panel, Render_Buffer_t *render_buffer)
     y = field_panel->BL.y + field_panel->height - field_panel->caption_height;
     draw_rect_with_brd(x, y, field_panel->width, field_panel->caption_height, field_panel->brd_width,
         field_panel->caption_bkg_color, field_panel->brd_color, render_buffer);
+
+    /* Render the caption text */
+    x += 15;
+    y += 8;
+    font_draw_string(font, field_panel->caption, field_panel->width, x, y, 2, 0x000000, 
+        render_buffer);
 }

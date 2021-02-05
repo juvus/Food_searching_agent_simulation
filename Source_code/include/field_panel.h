@@ -9,6 +9,8 @@ Description: Header file for the field panel class.
 #define FIELD_PANEL_H_
 
 #include <utils.h>
+#include <font.h>
+#include <simulation_constants.h>
 
 /* Structure of the field panel*/
 struct Field_Panel
@@ -21,6 +23,7 @@ struct Field_Panel
    u32 brd_color;  /* Color of the field borders */
    u32 caption_bkg_color;  /* Color of the panel caption background */
    u32 caption_height;  /* Height if the panel caption */
+   u8 caption[FIELD_PANEL_MAX_CAPTION_LENGTH];  /* Caption of the panel */
 };
 typedef struct Field_Panel Field_Panel_t;
 
@@ -36,6 +39,6 @@ void field_panel_destructor(Field_Panel_t *field_panel);
 void field_panel_init(Field_Panel_t *field_panel, Render_Buffer_t *render_buffer);
 
 /* Method for render the Field_Panel object */
-void field_panel_render(Field_Panel_t *field_panel, Render_Buffer_t *render_buffer);
+void field_panel_render(Field_Panel_t *field_panel, Font_t *font, Render_Buffer_t *render_buffer);
 
 #endif /* FIELD_PANEL_H_ */

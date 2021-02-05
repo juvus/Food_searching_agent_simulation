@@ -92,7 +92,7 @@ dconsole_hide(DConsole_t *dconsole, Render_Buffer_t *render_buffer)
 }
 
 void
-dconsole_render(DConsole_t *dconsole, Symbol_data_t *font_symbols, Render_Buffer_t *render_buffer)
+dconsole_render(DConsole_t *dconsole, Font_t *font, Render_Buffer_t *render_buffer)
 {
     /* Function to render the console with all messages */
 
@@ -113,8 +113,8 @@ dconsole_render(DConsole_t *dconsole, Symbol_data_t *font_symbols, Render_Buffer
             /* @ Add somehow the possibility to cut the string with .... pass
              to the function the -1 or maximum width in pixels, not the amount of characters!!!*/
             
-            font_draw_string(dconsole->messages[i].msg_str, max_width, x_pos, y_pos, 1,
-                             dconsole->messages[i].color, font_symbols, render_buffer);
+            font_draw_string(font, dconsole->messages[i].msg_str, max_width, x_pos, y_pos, 1,
+                             dconsole->messages[i].color, render_buffer);
         }
         y_pos -= (7 + 7);
     }

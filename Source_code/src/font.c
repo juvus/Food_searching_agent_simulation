@@ -1,16 +1,127 @@
-/*================================================================================*/
-/* Realization of font methods                                                    */
-/*================================================================================*/
+/*
+===============================================================================
+Filename: font.c
+Description: Definition of the Font class member functions.
+===============================================================================
+*/
 
+/* Standard includes: */
+#include <assert.h>
+#include <stdlib.h>
+
+/* Program includes: */
+#include <font.h>
 #include <utils.h>
 #include <file_io.h>
-#include <font.h>
 #include <software_rendering.h>
 #include <simulation_constants.h>
 
-/* Realization of the interface functions */
+/* Static function declaration */
+static void extract_symbols(Symbol_data_t *font_symbols, Loaded_img_t *font_img); 
+
+/* Definition of the member fuctions */
+
+Font_t* 
+font_constructor(void)
+{
+    /* Constructor of the Font object */
+    Font_t *font = (Font_t*) malloc (1 * sizeof(Font_t));
+    font->symbols_data = (Symbol_data_t *) calloc (SYM_ROWS * SYM_COLS, sizeof(Symbol_data_t)); 
+
+    if ((font == NULL) || (font->symbols_data == NULL))
+    {
+        assert(0 && "ERROR: Error in memory allocation for the Font object");
+    }
+    return font;
+}
+
 void
-font_extract_symbols(Symbol_data_t *font_symbols, Loaded_img_t *font_img)
+font_destructor(Font_t *font)
+{
+    /* Destructor of the Font object */
+    if (font && font->symbols_data)
+    {
+        free(font->symbols_data);
+        free(font);
+        return 0;
+    }
+    assert(0 && "ERROR: Memory for the Font object was not previously allocated");
+}
+
+void
+font_init(Font_t *font, Loaded_img_t *font_img)
+{
+    /* Initialization of the Font object */
+    font->font_img = font_img;
+    extract_symbols(font->symbols_data, font->font_img); 
+}
+
+void
+font_draw_string(Font_t *font, char *str, s32 str_max_width, u32 x, u32 y, u32 size, u32 color,
+    Render_Buffer_t *render_buffer)
+{
+    /* Function to render the string or part of the string */
+
+    u32 x_init; /* Initial x position of the very first symbol */
+    s32 str_width; /* Current width of the string in pixels */
+    u32 char_index; /* Index of the char in str */
+    s32 p; /* Index of the symbol_array in font_symbols */
+    u32 i, j; /* Coordinates of pixels in symbol box  */
+    u32 x_pos, y_pos; /* Coordinates of pixels taking into account the pixel size */
+    Symbol_data_t *font_symbol; /* Current symbol data */
+    b32 stop_print; /* Flag to stop print the symbols */
+
+    x_init = x;
+    char_index = 0;
+    str_width = 0;
+    stop_print = false;
+    
+    while (str[char_index] != '\0') {
+
+        if ((str_max_width > 0) && (str_width >= str_max_width - 7)) {
+            /* Print "..." and then stop */
+            font_symbol = &(font->symbols_data[95]);
+            stop_print = true;
+        }
+        else {
+            font_symbol = &(font->symbols_data[(str[char_index] - 32)]);
+        }
+
+        /* Add necessary bottom shift */
+        y -= (font_symbol->shift_bottom) * size;
+        
+        p = 0;
+        for (i = 0; i < 7; ++i) {
+            for (j = 0; j < 6; ++j) {
+
+                x_pos = x + j * size;
+                y_pos = y + i * size;
+
+                if (font_symbol->symbol_array[p]) {
+                    draw_rect(x_pos, y_pos, size, size, color, render_buffer);
+                }
+                p++;
+            }
+        }
+
+        /* Restore the normal y position */
+        y += (font_symbol->shift_bottom) * size;
+
+        /* Determine the x position of the next symbol in str */
+        x += (7 - font_symbol->shift_left) * size;
+        str_width = x - x_init;
+        char_index++;
+        
+        /* Check to exit the printing procedure */
+        if (stop_print) {
+            break;
+        }
+    }  
+}
+
+/* Realization of the static functions */
+static void
+extract_symbols(Symbol_data_t *font_symbols, Loaded_img_t *font_img)
 {
     /* Function to exctract symbols from the font.png image */
 
@@ -94,65 +205,4 @@ font_extract_symbols(Symbol_data_t *font_symbols, Loaded_img_t *font_img)
     }
 }
 
-void
-font_draw_string(char *str, s32 str_max_width, u32 x, u32 y, u32 size, u32 color,
-                 Symbol_data_t *font_symbols, Render_Buffer_t *render_buffer)
-{
-    /* Function to render the string or part of the string */
 
-    u32 x_init; /* Initial x position of the very first symbol */
-    s32 str_width; /* Current width of the string in pixels */
-    u32 char_index; /* Index of the char in str */
-    s32 p; /* Index of the symbol_array in font_symbols */
-    u32 i, j; /* Coordinates of pixels in symbol box  */
-    u32 x_pos, y_pos; /* Coordinates of pixels taking into account the pixel size */
-    Symbol_data_t *font_symbol; /* Current symbol data */
-    b32 stop_print; /* Flag to stop print the symbols */
-
-    x_init = x;
-    char_index = 0;
-    str_width = 0;
-    stop_print = false;
-    
-    while (str[char_index] != '\0') {
-
-        if ((str_max_width > 0) && (str_width >= str_max_width - 7)) {
-            /* Print "..." and then stop */
-            font_symbol = &(font_symbols[95]);
-            stop_print = true;
-        }
-        else {
-            font_symbol = &(font_symbols[(str[char_index] - 32)]);
-        }
-
-        /* Add necessary bottom shift */
-        y -= (font_symbol->shift_bottom) * size;
-        
-        p = 0;
-        for (i = 0; i < 7; ++i) {
-            for (j = 0; j < 6; ++j) {
-
-                x_pos = x + j * size;
-                y_pos = y + i * size;
-
-                if (font_symbol->symbol_array[p]) {
-                    draw_rect(x_pos, y_pos, size, size, color, render_buffer);
-                }
-                p++;
-            }
-        }
-
-        /* Restore the normal y position */
-        y += (font_symbol->shift_bottom) * size;
-
-        /* Determine the x position of the next symbol in str */
-        x += (7 - font_symbol->shift_left) * size;
-        str_width = x - x_init;
-        char_index++;
-        
-        /* Check to exit the printing procedure */
-        if (stop_print) {
-            break;
-        }
-    }  
-}

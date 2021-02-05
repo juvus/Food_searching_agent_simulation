@@ -28,6 +28,7 @@ File with the different simulation global constants.
 #define FIELD_PANEL_BKG_COLOR 0xffffff  /* Background color of the field */
 #define FIELD_PANEL_BRD_COLOR 0xb4b4b4  /* Color of the field boarders */
 #define FIELD_PANEL_CAPTION_BKG_COLOR 0xa5ff7f  /* Color of the panel caption background */
+#define FIELD_PANEL_MAX_CAPTION_LENGTH 255  /* Maximum length of the caption */
 
 /* Constants for the Info_Panel object */
 #define INFO_PANEL_HEIGHT 540  /* Height of the panel */
