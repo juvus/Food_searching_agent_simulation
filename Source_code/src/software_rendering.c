@@ -195,10 +195,10 @@ draw_rect_with_brd(u32 x0, u32 y0, u32 width, u32 height, u32 brd_width, u32 col
 
     /* Render the boarders with desired width and color */
     if (brd_width) {
-        //draw_rect(x0, y0, width, brd_width, brd_color, render_buffer);
-        //draw_rect(x0, y0 + height - brd_width, width, brd_width, brd_color, render_buffer);
-        //draw_rect(x0, y0, brd_width, height, brd_color, render_buffer);
-        //draw_rect(x0 + width -brd_width, y0, brd_width, height, brd_color, render_buffer);
+        draw_rect(x0, y0, width, brd_width, brd_color, render_buffer);
+        draw_rect(x0, y0 + height - brd_width, width, brd_width, brd_color, render_buffer);
+        draw_rect(x0, y0, brd_width, height, brd_color, render_buffer);
+        draw_rect(x0 + width -brd_width, y0, brd_width, height, brd_color, render_buffer);
     }
 }
 
