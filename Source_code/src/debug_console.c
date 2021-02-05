@@ -1,120 +1,126 @@
-/*================================================================================*/
-/* Realization of debug console methods                                           */
-/*================================================================================*/
+/*
+================================================================================
+Filename: debug_console.c
+Description: Definition of the DConsole class member functions.
+================================================================================
+*/
 
-#include <utils.h>
-#include <debug_console.h>
-#include <software_rendering.h>
+/* Standard includes: */
 #include <string.h>
 #include <assert.h>
 #include <stdlib.h>
+
+/* Program includes: */
+#include <debug_console.h>
+#include <utils.h>
+#include <software_rendering.h>
 #include <font.h>
 #include <simulation_constants.h>
 
-/* Realization of the interface functions */
-void
-dconsole_init(DConsole_t *dconsole, u32 x, u32 y, u32 width)
+/* Definition of the Debug_Console member fuctions: */
+
+Debug_Console_t* 
+debug_console_constructor(void)
 {
-    /* Function to initialize the debug console */
-
-    Message_t *messages; 
-    char *tmp_msg_str;
-    u32 i;
-    
-    dconsole->x = x;
-    dconsole->y = y;
-    dconsole->width = width;
-    dconsole->height = DCONSOLE_MARGINS * 2 + DCONSOLE_MESSAGES * 7 + \
-        (DCONSOLE_MESSAGES - 1) * 7; /* last digit - lines intend in pixels */
-
-    /* Allocate the memory for the array of messages */
-    messages = (Message_t *) calloc (DCONSOLE_MESSAGES, sizeof(Message_t));
-    dconsole->messages = messages;
-
-    /* Allocate the memory for message strings */
-    for (i = 0; i < DCONSOLE_MESSAGES; ++i) {
-        tmp_msg_str = (char *) calloc (DCONSOLE_MAX_MSG_LENGTH, sizeof(char));
-        dconsole->messages[i].msg_str = tmp_msg_str;
-        dconsole->messages[i].msg_str[0] = '\0';
+    /* Constructor of the Debug_Console object */
+    Debug_Console_t *debug_console = (Debug_Console_t*) calloc (1,  sizeof(Debug_Console_t)); 
+    if (debug_console == NULL)
+    {
+        assert(0 && "ERROR: Error in memory allocation for the Debug_Console object");
     }
-    
-    dconsole->message_index = 0;  
+    return debug_console;
+}
+
+void 
+debug_console_destructor(Debug_Console_t *debug_console)
+{
+    /* Destructor of the Debug_Console object */
+    if (debug_console)
+    {
+        free(debug_console);
+        return 0;
+    }
+    assert(0 && "ERROR: Memory for the Debug_Console object was not previously allocated");
 }
 
 void
-dconsole_add_message(DConsole_t *dconsole, char *msg_str, u32 color)
+debug_console_init(Debug_Console_t *debug_console, u32 x, u32 y, u32 width)
+{
+    /* Initialization of the Debug_Console object */
+    debug_console->BL.x = x;
+    debug_console->BL.y = y;
+    debug_console->width = width;
+    debug_console->height = DEBUG_CONSOLE_MARGINS * 2 + DEBUG_CONSOLE_MESSAGES * 7 + \
+        (DEBUG_CONSOLE_MESSAGES - 1) * 7; /* last digit - lines intend in pixels */
+    debug_console->message_index = 0; 
+}
+
+void
+debug_console_add_message(Debug_Console_t *debug_console, char *msg_str, u32 color)
 {
     /* Function to add a string to the debug console */
 
-    /* Length of the msg_str should be less than 100 symbols */
-    assert(strlen(msg_str) <= 100);
+    /* Length of the msg_str should be less than 255 symbols */
+    assert(strlen(msg_str) < DEBUG_CONSOLE_MAX_MSG_LENGTH);
 
-    u32 index = dconsole->message_index;
-    dconsole->messages[index].color = color;
-    strcpy_s(dconsole->messages[index].msg_str, DCONSOLE_MAX_MSG_LENGTH, msg_str);
-    dconsole->message_index++;
+    u32 index = debug_console->message_index;
+    debug_console->messages[index].color = color;
+    strcpy_s(debug_console->messages[index].msg_str, DEBUG_CONSOLE_MAX_MSG_LENGTH, msg_str);
+    debug_console->message_index++;
     
     /* For safe in case of adding more messages than possible to store */
-    if (dconsole->message_index >= 10) {
-        dconsole->message_index = 0;
+    if (debug_console->message_index >= DEBUG_CONSOLE_MESSAGES) {
+        debug_console->message_index = 0;
     }
 }
 
 void
-dconsole_clear_messages(DConsole_t *dconsole)
+debug_console_clear_messages(Debug_Console_t *debug_console)
 {
-    /* Function to delete the all messages */
-
+    /* Function to delete the all messages in the console */
     u32 i;
 
-    for (i = 0; i < DCONSOLE_MESSAGES; ++i) {
-        dconsole->messages[i].msg_str[0] = '\0';
+    for (i = 0; i < DEBUG_CONSOLE_MESSAGES; ++i) {
+        debug_console->messages[i].msg_str[0] = '\0';
     }
-    dconsole->message_index = 0;
+    debug_console->message_index = 0;
 }
 
 void
-dconsole_clear_console(DConsole_t *dconsole, Render_Buffer_t *render_buffer)
+debug_console_clear_console(Debug_Console_t *debug_console, Render_Buffer_t *render_buffer)
 {
     /* Function to clear the console from the all messages */      
-    
-    draw_rect_with_brd(dconsole->x, dconsole->y, dconsole->width, dconsole->height, 1,
-                       DCONSOLE_BKG_COLOR, DCONSOLE_BRD_COLOR, render_buffer);   
+    draw_rect_with_brd(debug_console->BL.x, debug_console->BL.y, debug_console->width,
+        debug_console->height, 1, DEBUG_CONSOLE_BKG_COLOR, DEBUG_CONSOLE_BRD_COLOR, render_buffer);   
 }
 
 void
-dconsole_hide(DConsole_t *dconsole, Render_Buffer_t *render_buffer)
+debug_console_hide(Debug_Console_t *debug_console, Render_Buffer_t *render_buffer)
 {
     /* Function to hide the console */
-
-    draw_rect(dconsole->x , dconsole->y, dconsole->width, dconsole->height,
-              BKG_COLOR, render_buffer);
+    draw_rect(debug_console->BL.x , debug_console->BL.y, debug_console->width, debug_console->height,
+        BKG_COLOR, render_buffer);
 }
 
 void
-dconsole_render(DConsole_t *dconsole, Font_t *font, Render_Buffer_t *render_buffer)
+debug_console_render(Debug_Console_t *debug_console, Font_t *font, Render_Buffer_t *render_buffer)
 {
     /* Function to render the console with all messages */
-
     u32 x_pos;
     u32 y_pos;
     u32 i;
     u32 max_width;
     
-    x_pos = dconsole->x + DCONSOLE_MARGINS; 
-    y_pos = dconsole->y + dconsole->height - DCONSOLE_MARGINS - 7;  
-    max_width = dconsole->width - DCONSOLE_MARGINS * 2;
+    x_pos = debug_console->BL.x + DEBUG_CONSOLE_MARGINS; 
+    y_pos = debug_console->BL.y + debug_console->height - DEBUG_CONSOLE_MARGINS - 7;  
+    max_width = debug_console->width - DEBUG_CONSOLE_MARGINS * 2;
     
-    dconsole_clear_console(dconsole, render_buffer);
+    debug_console_clear_console(debug_console, render_buffer);
     
-    for (i = 0; i < DCONSOLE_MESSAGES; ++i) {
-        if (dconsole->messages[i].msg_str[0] != '\0') {
-
-            /* @ Add somehow the possibility to cut the string with .... pass
-             to the function the -1 or maximum width in pixels, not the amount of characters!!!*/
-            
-            font_draw_string(font, dconsole->messages[i].msg_str, max_width, x_pos, y_pos, 1,
-                             dconsole->messages[i].color, render_buffer);
+    for (i = 0; i < DEBUG_CONSOLE_MESSAGES; ++i) {
+        if (debug_console->messages[i].msg_str[0] != '\0') {
+            font_draw_string(font, debug_console->messages[i].msg_str, max_width, x_pos, y_pos, 1,
+                debug_console->messages[i].color, render_buffer);
         }
         y_pos -= (7 + 7);
     }

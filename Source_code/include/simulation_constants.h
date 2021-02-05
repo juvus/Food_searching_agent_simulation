@@ -46,10 +46,10 @@ File with the different simulation global constants.
 #define PLOT_PANEL_CAPTION_BKG_COLOR 0xa5ff7f  /* Color of the plot panel caption background */
 
 /* Constants for the debug console */
-#define DCONSOLE_MESSAGES 10  /* Amount of the debug messages in debug console */
-#define DCONSOLE_MAX_MSG_LENGTH 255  /* Maximum message length */
-#define DCONSOLE_BKG_COLOR 0xffffff  /* Background color of the debug console */
-#define DCONSOLE_BRD_COLOR 0xb4b4b4  /* Console boarders color */
-#define DCONSOLE_MARGINS 10  /* Top, left, bottom and right margins */
+#define DEBUG_CONSOLE_MESSAGES 10  /* Amount of the debug messages in debug console */
+#define DEBUG_CONSOLE_MAX_MSG_LENGTH 255  /* Maximum message length */
+#define DEBUG_CONSOLE_BKG_COLOR 0xffffff  /* Background color of the debug console */
+#define DEBUG_CONSOLE_BRD_COLOR 0xb4b4b4  /* Console boarders color */
+#define DEBUG_CONSOLE_MARGINS 10  /* Top, left, bottom and right margins */
 
 #endif  /* SIMULATION_CONSTANTS_H_ */

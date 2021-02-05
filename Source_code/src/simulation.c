@@ -1,6 +1,8 @@
 /*
 ===============================================================================
-Definition of the simulation class methods. Main logic loop of the simulation.
+Filename: simulation.c
+Description: Definition of the simulation class methods. Main logic loop of
+    the simulation.
 ===============================================================================
 */
 
@@ -29,18 +31,15 @@ Definition of the simulation class methods. Main logic loop of the simulation.
 #include <field_panel.h>
 #include <info_panel.h>
 #include <plot_panel.h>
-//#include <arena.h> inclides for the simulation objects
 #include <misc.h>
 
 /* Loaded images */
 static Loaded_img_t font_img;  /* Image with font symbols */
-//static Loaded_img_t agent_img;  /* Image of the food searching agent */
-//static Loaded_img_t food_img;  /* Image of the food */
 
-/* Define different parameters for game systems  */
+/* Define different parameters for the simulation */
 static Simulation_t simulation = {0};  /* Simulation object */
 static Simulation_State_t simulation_state = SIM_ST_LOAD_RESOURCES;  /* Simulation state */
-static DConsole_t dconsole;  /* Debug console with messages */
+static Debug_Console_t *debug_console;  /* Debug console with messages */
 static Font_t *font;  /* Pointer to the font */
 static LARGE_INTEGER begin_counter;  /* Union for for dtime calculation */
 static LARGE_INTEGER end_counter;  /* Union for for dtime calculation */
@@ -93,6 +92,7 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
         {
             /* Set of object constructors */       
             font = font_constructor();
+            debug_console = debug_console_constructor();
             field_panel = field_panel_constructor();
             info_panel = info_panel_constructor();
             plot_panel = plot_panel_constructor();
@@ -123,7 +123,7 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
             plot_panel_render(plot_panel, render_buffer);
 
             /* Initialization of the debug console */
-            dconsole_init(&dconsole, 50, 100, 300);
+            debug_console_init(debug_console, 50, 100, 300);
 
             /* Function for the thread of main simulation loop */
             QueryPerformanceCounter(&begin_counter);
@@ -140,15 +140,18 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
         case SIM_ST_LOGIC_RUN:
         {
             /* Test of the debug console */
-            dconsole_clear_messages(&dconsole);
-            dconsole_clear_console(&dconsole, render_buffer);
-            sprintf_s(dconsole.str_buffer, DCONSOLE_MAX_MSG_LENGTH, "%s", "Hello, world!!!");
-            dconsole_add_message(&dconsole, dconsole.str_buffer, 0x0000ff);
-            sprintf_s(dconsole.str_buffer, DCONSOLE_MAX_MSG_LENGTH, "%s%5.3lf", "dtime: ", dtime_orig);
-            dconsole_add_message(&dconsole, dconsole.str_buffer, 0xff0000);
-            sprintf_s(dconsole.str_buffer, DCONSOLE_MAX_MSG_LENGTH, "%s%5.3lf", "FPS: ", (1.0f / dtime_orig));
-            dconsole_add_message(&dconsole, dconsole.str_buffer, 0xff0000);
-            dconsole_render(&dconsole, font, render_buffer);
+            debug_console_clear_messages(debug_console);
+            debug_console_clear_console(debug_console, render_buffer);
+            sprintf_s(debug_console->str_buffer, DEBUG_CONSOLE_MAX_MSG_LENGTH, "%s",
+                "Hello, world!!!");
+            debug_console_add_message(debug_console, debug_console->str_buffer, 0x0000ff);
+            sprintf_s(debug_console->str_buffer, DEBUG_CONSOLE_MAX_MSG_LENGTH, "%s%5.3lf", 
+                "dtime: ", dtime_orig);
+            debug_console_add_message(debug_console, debug_console->str_buffer, 0xff0000);
+            sprintf_s(debug_console->str_buffer, DEBUG_CONSOLE_MAX_MSG_LENGTH, "%s%5.3lf", 
+                "FPS: ", (1.0f / dtime_orig));
+            debug_console_add_message(debug_console, debug_console->str_buffer, 0xff0000);
+            debug_console_render(debug_console, font, render_buffer);
             
             /* Some simulation logic code here */
 

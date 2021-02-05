@@ -1,45 +1,63 @@
-/*================================================================================*/
-/* Header file for the debug console class                                        */
-/*================================================================================*/
+/*
+================================================================================
+Filename: debug_console.h
+Description: Header file for the debug console class.
+================================================================================
+*/
 
 #ifndef DEBUG_CONSOLE_H_
 #define DEBUG_CONSOLE_H_
 
+/* Program includes: */
 #include <utils.h>
 #include <font.h>
+#include <simulation_constants.h>
 
-struct Message {
-    char *msg_str; /* Message string */
-    u32 color; /* Font color */ 
+/* Structure for a single debug console message */
+struct Message 
+{
+    u8 msg_str[DEBUG_CONSOLE_MAX_MSG_LENGTH]; /* Single message string */
+    u32 color; /* Color of the message font */ 
 };
 typedef struct Message Message_t;
 
-struct DConsole {
-    u32 x;  /* BL corner x coordinate of the console */
-    u32 y;  /* BL corner y coordinate of the console */
-    u32 height; /* Height will be determined from DCONSOLE_MESSAGES */ 
+/* Structure for debug console object */
+struct Debug_Console 
+{
+    V2_u32_t BL;  /* Bottom-left corner position of the console */
     u32 width;  /* Width of the debug console */
+    u32 height; /* Height will be determined from DCONSOLE_MESSAGES */ 
     u32 message_index;  /* Pointer to the current available message line in the console */
-    Message_t *messages;  /* Pointer to the debug console message */
-    char str_buffer[255];  /* Temporary buffer for the debug string */
+    Message_t messages[DEBUG_CONSOLE_MESSAGES];  /* Array with the debug console messages */
+    u8 str_buffer[255];  /* Temporary buffer for the debug string */
 };
-typedef struct DConsole DConsole_t;
-/* Function to initialize the debug console */
-void dconsole_init(DConsole_t *dconsole, u32 x, u32 y, u32 width);
+typedef struct Debug_Console Debug_Console_t;
+
+/* Declaration of the Debug_Console member fuctions: */
+
+/* Constructor of the Debug_Console object */
+Debug_Console_t* debug_console_constructor(void);
+
+/* Destructor of the Debug_Console object */
+void debug_console_destructor(Debug_Console_t *debug_console);
+
+/* Initialization of the Debug_Console object */
+void debug_console_init(Debug_Console_t *debug_console, u32 x, u32 y, u32 width);
 
 /* Function to add a string to the debug console */
-void dconsole_add_message(DConsole_t *dconsole, char *msg_str, u32 color);
+void debug_console_add_message(Debug_Console_t *debug_console, char *msg_str, u32 color);
 
 /* Function to delete the all messages */
-void dconsole_clear_messages(DConsole_t *dconsole);
+void debug_console_clear_messages(Debug_Console_t *debug_console);
 
 /* Function to clear the console from the all messages */
-void dconsole_clear_console(DConsole_t *dconsole, Render_Buffer_t *render_buffer);
+void debug_console_clear_console(Debug_Console_t *debug_console, Render_Buffer_t *render_buffer);
 
 /* Function to hide the console */
-void dconsole_hide(DConsole_t *dconsole, Render_Buffer_t *render_buffer);
+void debug_console_hide(Debug_Console_t *debug_console, Render_Buffer_t *render_buffer);
 
-/* Function to render the console with all messages */
-void dconsole_render(DConsole_t *dconsole, Font_t *font, Render_Buffer_t *render_buffer);
+/* Function to render the debug console with all messages */
+void debug_console_render(Debug_Console_t *debug_console, Font_t *font, 
+    Render_Buffer_t *render_buffer);
 
 #endif // DEBUG_CONSOLE_H_
