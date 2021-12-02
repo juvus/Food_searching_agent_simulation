@@ -68,6 +68,19 @@ _DEPS_simualtion = simulation.h software_rendering.h utils.h input_treatment.h f
 font.h dbg.h debug_console.h simulation_constants.h
 DEPS_simualtion = $(patsubst %,$(IDIR)/%,$(_DEPS_simualtion))
 
+# Module for the field panel
+_DEPS_field_panel = field_panel.h utils.h software_rendering.h font.h simulation_constants.h
+DEPS_field_panel = $(patsubst %,$(IDIR)/%,$(_DEPS_field_panel))
+
+# Module for the info panel
+_DEPS_info_panel = info_panel.h utils.h software_rendering.h font.h simulation_constants.h
+DEPS_info_panel = $(patsubst %,$(IDIR)/%,$(_DEPS_info_panel))
+
+# Module for the plot panel
+_DEPS_plot_panel = plot_panel.h info_panel.h field_panel.h utils.h software_rendering.h \
+font.h simulation_constants.h
+DEPS_plot_panel = $(patsubst %,$(IDIR)/%,$(_DEPS_plot_panel))
+
 # Module for the debug console
 _DEPS_debug_console = debug_console.h utils.h software_rendering.h font.h simulation_constants.h
 DEPS_debug_console = $(patsubst %,$(IDIR)/%,$(_DEPS_debug_console))
@@ -84,7 +97,7 @@ $(ODIR)/%.o: $(SDIR)/%.c $(DEPS_%)
 #==============================================================================================
 
 _OBJ = win32_platform.o input_treatment.o software_rendering.o file_io.o font.o misc.o \
-simulation.o debug_console.o
+simulation.o field_panel.o info_panel.o plot_panel.o debug_console.o
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 Program: $(OBJ)

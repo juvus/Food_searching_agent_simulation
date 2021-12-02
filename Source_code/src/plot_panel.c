@@ -10,14 +10,15 @@ Description: Definition of the Plot_Panel class member functions.
 /* Standard includes: */
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 /* Program includes: */
 #include <plot_panel.h>
 #include <info_panel.h>
 #include <field_panel.h>
 #include <utils.h>
-#include <simulation_constants.h>
 #include <software_rendering.h>
+#include <simulation_constants.h>
 
 Plot_Panel_t*
 plot_panel_constructor(void)
@@ -38,7 +39,7 @@ plot_panel_destructor(Plot_Panel_t *plot_panel)
     if (plot_panel)
     {
         free(plot_panel);
-        return 0;
+        return;
     }
     assert(0 && "ERROR: Memory for the Plot_Panel object was not previously allocated");
 }
@@ -56,6 +57,7 @@ plot_panel_init(Plot_Panel_t *plot_panel, Info_Panel_t *info_panel, Field_Panel_
     plot_panel->brd_width = PLOT_PANEL_BRD_WIDTH;
     plot_panel->caption_height = PLOT_PANEL_CAPTION_HEIGHT;
     plot_panel->caption_bkg_color = PLOT_PANEL_CAPTION_BKG_COLOR;
+    sprintf_s(plot_panel->caption, PLOT_PANEL_MAX_CAPTION_LENGTH, "%s", "Plot panel");
     
     /* Calculation the position of the bottom-left corner of the Plot_Panel object */
     plot_panel->BL.x = info_panel->BL.x;
@@ -63,7 +65,7 @@ plot_panel_init(Plot_Panel_t *plot_panel, Info_Panel_t *info_panel, Field_Panel_
 }
 
 void
-plot_panel_render(Plot_Panel_t *plot_panel, Render_Buffer_t *render_buffer)
+plot_panel_render(Plot_Panel_t *plot_panel, Font_t *font, Render_Buffer_t *render_buffer)
 {
     /* Method for render the Plot_Panel object in the window */
     u32 x, y;  /* Temporary coordinates */
@@ -77,4 +79,10 @@ plot_panel_render(Plot_Panel_t *plot_panel, Render_Buffer_t *render_buffer)
     y = plot_panel->BL.y + plot_panel->height - plot_panel->caption_height;
     draw_rect_with_brd(x, y, plot_panel->width, plot_panel->caption_height, plot_panel->brd_width,
         plot_panel->caption_bkg_color, plot_panel->brd_color, render_buffer);
+
+    /* Render the caption text */
+    x += 15;
+    y += 8;
+    font_draw_string(font, plot_panel->caption, plot_panel->width, x, y, 2, 0x000000, 
+        render_buffer);
 }

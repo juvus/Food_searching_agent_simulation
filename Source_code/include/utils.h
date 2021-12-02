@@ -76,7 +76,7 @@ inline V2_f32_t mul_V2_f32(V2_f32_t a, f32 num) {
 struct Render_Buffer {
     /* Platform non-specific part */
     u32 width, height;
-    u32 *pixels;
+    u32 *bitmap_memory;
     /* Platform specific part */
     BITMAPINFO bitmap_info;
 };

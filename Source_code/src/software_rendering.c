@@ -44,7 +44,7 @@ clear_full_screen(u32 color, Render_Buffer_t *render_buffer)
 {
     /* Function for clear the screen with the desired color */
 
-    u32 *pixel = render_buffer->pixels;
+    u32 *pixel = render_buffer->bitmap_memory;
     u32 x, y;
 
     for (y = 0; y < render_buffer->height; y++) {
@@ -59,7 +59,7 @@ draw_pixel(u32 x, u32 y, u32 color, Render_Buffer_t *render_buffer)
 {
     /* Function for drawing a single pixel on the screen */
 
-    u32 *pixel = render_buffer->pixels;
+    u32 *pixel = render_buffer->bitmap_memory;
     *(pixel + x + render_buffer->width * y) = color;
 }
 
@@ -76,7 +76,7 @@ void
 draw_hor_line(u32 x0, u32 y0, u32 length, u32 width, u32 color, Render_Buffer_t *render_buffer)
 {
     /* Function for drawing the horisontal line */
-    u32 *pixel = render_buffer->pixels;
+    u32 *pixel = render_buffer->bitmap_memory;
     u32 x, y;
 
     for (x = x0; x < (x0 + length); ++x) {
@@ -90,7 +90,7 @@ void
 draw_ver_line(u32 x0, u32 y0, u32 length, u32 width, u32 color, Render_Buffer_t *render_buffer)
 {
     /* Function for drawing the horisontal line */
-    u32 *pixel = render_buffer->pixels;
+    u32 *pixel = render_buffer->bitmap_memory;
     u32 x, y;
 
     for (y = y0; y < (y0 + length); ++y) {
@@ -108,7 +108,7 @@ draw_line_extended(V2_u32_t v0, V2_u32_t v1, u32 color, Render_Buffer_t *render_
        Brezenham algorithm. This version also record the y coordinates for
        further rasterization filling of the triangle */
 
-    u32 *pixel = render_buffer->pixels;
+    u32 *pixel = render_buffer->bitmap_memory;
     s32 xerr = 0, yerr = 0;
     s32 dx = v1.x - v0.x;
     s32 dy = v1.y - v0.y;
@@ -174,7 +174,7 @@ draw_rect(u32 x0, u32 y0, u32 width, u32 height, u32 color, Render_Buffer_t *ren
     /* Function for drawing the rectangle */
 
     u32 x, y;
-    u32 *pixel = render_buffer->pixels;
+    u32 *pixel = render_buffer->bitmap_memory;
 
     for(y = y0; y < height + y0; y++) {
         for (x = x0; x < width + x0; x++) {
@@ -451,7 +451,7 @@ draw_bitmap(u32 x, u32 y, Loaded_img_t* image, u32 scale, Render_Buffer_t *rende
     u32 i, j; /* Coordinates of the downloaded image */
     u32 m, n; /* Coordinates inside a big pixel  */
     u32 index;
-    u32 *pixel = render_buffer->pixels;
+    u32 *pixel = render_buffer->bitmap_memory;
 
     x_scaled = x;
     y_scaled = y;
@@ -489,7 +489,7 @@ draw_object_by_mask(u32 x, u32 y, Loaded_img_t *mask, u32 color, u32 scale, Rend
     u32 i, j; /* Coordinates of the downloaded mask image */
     u32 m, n; /* Coordinates inside a big pixel  */
     u32 index;
-    u32 *pixel = render_buffer->pixels;
+    u32 *pixel = render_buffer->bitmap_memory;
 
     x_scaled = x;
     y_scaled = y;

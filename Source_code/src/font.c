@@ -43,7 +43,6 @@ font_destructor(Font_t *font)
     {
         free(font->symbols_data);
         free(font);
-        return 0;
     }
     assert(0 && "ERROR: Memory for the Font object was not previously allocated");
 }

@@ -10,13 +10,15 @@ Description: Definition of the Info_Panel class member functions.
 /* Standard includes: */
 #include <stdlib.h>
 #include <assert.h>
+#include <stdio.h>
 
 /* Program includes: */
 #include <info_panel.h>
 #include <field_panel.h>
 #include <utils.h>
-#include <simulation_constants.h>
 #include <software_rendering.h>
+#include <font.h>
+#include <simulation_constants.h>
 
 Info_Panel_t*
 info_panel_constructor(void)
@@ -37,7 +39,7 @@ info_panel_destructor(Info_Panel_t *info_panel)
     if (info_panel)
     {
         free(info_panel);
-        return 0;
+        return;
     }
     assert(0 && "ERROR: Memory for the Info_Panel object was not previously allocated");
 }
@@ -54,14 +56,15 @@ info_panel_init(Info_Panel_t *info_panel, Field_Panel_t *field_panel, Render_Buf
     info_panel->brd_width = INFO_PANEL_BRD_WIDTH;
     info_panel->caption_height = INFO_PANEL_CAPTION_HEIGHT;
     info_panel->caption_bkg_color = INFO_PANEL_CAPTION_BKG_COLOR;
-    
+    sprintf_s(info_panel->caption, INFO_PANEL_MAX_CAPTION_LENGTH, "%s", "Info panel");
+
     /* Calculation the position of the bottom-left corner of the Info_Panel object */
     info_panel->BL.x = field_panel->BL.x + field_panel->width + PADDING_WIDTH;
     info_panel->BL.y = field_panel->BL.y + field_panel->height - info_panel->height;
 }
 
 void
-info_panel_render(Info_Panel_t *info_panel, Render_Buffer_t *render_buffer)
+info_panel_render(Info_Panel_t *info_panel, Font_t *font, Render_Buffer_t *render_buffer)
 {
     /* Method for render the Info_Panel object in the window */
     u32 x, y;  /* Temporary coordinates */
@@ -75,4 +78,10 @@ info_panel_render(Info_Panel_t *info_panel, Render_Buffer_t *render_buffer)
     y = info_panel->BL.y + info_panel->height - info_panel->caption_height;
     draw_rect_with_brd(x, y, info_panel->width, info_panel->caption_height, info_panel->brd_width,
         info_panel->caption_bkg_color, info_panel->brd_color, render_buffer);
+
+    /* Render the caption text */
+    x += 15;
+    y += 8;
+    font_draw_string(font, info_panel->caption, info_panel->width, x, y, 2, 0x000000, 
+        render_buffer);
 }

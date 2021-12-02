@@ -38,7 +38,7 @@ debug_console_destructor(Debug_Console_t *debug_console)
     if (debug_console)
     {
         free(debug_console);
-        return 0;
+        return;
     }
     assert(0 && "ERROR: Memory for the Debug_Console object was not previously allocated");
 }

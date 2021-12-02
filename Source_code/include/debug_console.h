@@ -16,7 +16,7 @@ Description: Header file for the debug console class.
 /* Structure for a single debug console message */
 struct Message 
 {
-    u8 msg_str[DEBUG_CONSOLE_MAX_MSG_LENGTH]; /* Single message string */
+    char msg_str[DEBUG_CONSOLE_MAX_MSG_LENGTH]; /* Single message string */
     u32 color; /* Color of the message font */ 
 };
 typedef struct Message Message_t;
@@ -29,7 +29,7 @@ struct Debug_Console
     u32 height; /* Height will be determined from DCONSOLE_MESSAGES */ 
     u32 message_index;  /* Pointer to the current available message line in the console */
     Message_t messages[DEBUG_CONSOLE_MESSAGES];  /* Array with the debug console messages */
-    u8 str_buffer[255];  /* Temporary buffer for the debug string */
+    char str_buffer[255];  /* Temporary buffer for the debug string */
 };
 typedef struct Debug_Console Debug_Console_t;
 

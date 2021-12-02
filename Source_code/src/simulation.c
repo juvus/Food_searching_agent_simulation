@@ -119,8 +119,8 @@ simulation_calculate_tick(Input_t *user_input, Render_Buffer_t *render_buffer)
             /* Initial render of game elements: */
             clear_full_screen(BKG_COLOR, render_buffer);
             field_panel_render(field_panel, font, render_buffer);
-            info_panel_render(info_panel, render_buffer);
-            plot_panel_render(plot_panel, render_buffer);
+            info_panel_render(info_panel, font, render_buffer);
+            plot_panel_render(plot_panel, font, render_buffer);
 
             /* Initialization of the debug console */
             debug_console_init(debug_console, 50, 100, 300);
