@@ -3,7 +3,6 @@
 Filename: simulation.c
 Description: Definition of the simulation class methods. Main logic loop of
     the simulation.
-Some additional text
 ===============================================================================
 */
 
