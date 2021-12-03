@@ -22,8 +22,8 @@ struct Plot_Panel
     u32 bkg_color;  /* Color of the background */
     u32 brd_color;  /* Color of the panel borders */
     u32 caption_bkg_color;  /* Color of the panel caption background */
-    u32 caption_height;  /* Height if the panel caption */
-    char caption[PLOT_PANEL_MAX_CAPTION_LENGTH];  /* Caption of the panel */
+    u32 caption_height;  /* Height of the panel caption */
+    char caption[PLOT_PANEL_MAX_STR_LENGTH];  /* Caption of the panel */
 };
 typedef struct Plot_Panel Plot_Panel_t;
 

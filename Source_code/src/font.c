@@ -107,7 +107,8 @@ font_draw_string(Font_t *font, char *str, s32 str_max_width, u32 x, u32 y, u32 s
         y += (font_symbol->shift_bottom) * size;
 
         /* Determine the x position of the next symbol in str */
-        x += (7 - font_symbol->shift_left) * size;
+        assert((font_symbol->shift_left < 7) && "ERROR: Symbol shift left is incorrect!");
+        x += (u32)(7 - font_symbol->shift_left) * size;
         str_width = x - x_init;
         char_index++;
         

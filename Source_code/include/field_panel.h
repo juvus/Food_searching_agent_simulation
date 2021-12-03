@@ -23,7 +23,7 @@ struct Field_Panel
    u32 brd_color;  /* Color of the field borders */
    u32 caption_bkg_color;  /* Color of the panel caption background */
    u32 caption_height;  /* Height if the panel caption */
-   char caption[FIELD_PANEL_MAX_CAPTION_LENGTH];  /* Caption of the panel */
+   char caption[FIELD_PANEL_MAX_STR_LENGTH];  /* Caption of the panel */
 };
 typedef struct Field_Panel Field_Panel_t;
 

@@ -19,6 +19,7 @@ Win32 platform with code for creation window and main game loop
 /* Other variables */
 static Render_Buffer_t render_buffer;  /* Buffer for the whole window image */
 static Input_t user_input = {0};  /* Structure storing the user input data */
+static b32 is_running;  /* Flag for the simulation running indication */
 
 /* Static functions */
 /* Function for window messages processing */
@@ -57,7 +58,7 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow
     }
     
     /* Prearation for the main processing loop */
-    b32 is_running = true;  /* Flag for the simulation running indication */
+    is_running = true;  
     HDC hdc = GetDC(window);  /* Handele to the drawing content */
     MSG message = {0};  /* Message structure that is used in callback function */
    
@@ -66,13 +67,6 @@ WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShow
     {
         while (PeekMessage(&message, window, 0, 0, PM_REMOVE))
         {
-            /* Process the quit message from the queue */
-            if (message.message == WM_QUIT)
-            {
-                is_running = false;
-                break;
-            }
-
             TranslateMessage(&message);
             DispatchMessage(&message);
         }
@@ -113,7 +107,7 @@ window_callback(HWND window, UINT message, WPARAM w_param, LPARAM l_param)
         case WM_CLOSE:
         case WM_DESTROY:
         {
-            PostQuitMessage(0);
+            is_running = false;
         } break;
 
         /* Creation of the window: */

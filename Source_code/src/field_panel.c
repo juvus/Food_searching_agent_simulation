@@ -55,7 +55,7 @@ field_panel_init(Field_Panel_t *field_panel, Render_Buffer_t *render_buffer)
     field_panel->brd_color = FIELD_PANEL_BRD_COLOR;
     field_panel->caption_height = FIELD_PANEL_CAPTION_HEIGHT;
     field_panel->caption_bkg_color = FIELD_PANEL_CAPTION_BKG_COLOR;
-    sprintf_s(field_panel->caption, FIELD_PANEL_MAX_CAPTION_LENGTH, "%s", "Field panel");
+    sprintf_s(field_panel->caption, FIELD_PANEL_MAX_STR_LENGTH, "%s", "Field panel");
     
     /* Calculation the position of the bottom-left corner of the Field_Panel object */
     field_panel->BL.x = PADDING_WIDTH;

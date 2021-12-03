@@ -57,7 +57,7 @@ plot_panel_init(Plot_Panel_t *plot_panel, Info_Panel_t *info_panel, Field_Panel_
     plot_panel->brd_width = PLOT_PANEL_BRD_WIDTH;
     plot_panel->caption_height = PLOT_PANEL_CAPTION_HEIGHT;
     plot_panel->caption_bkg_color = PLOT_PANEL_CAPTION_BKG_COLOR;
-    sprintf_s(plot_panel->caption, PLOT_PANEL_MAX_CAPTION_LENGTH, "%s", "Plot panel");
+    sprintf_s(plot_panel->caption, PLOT_PANEL_MAX_STR_LENGTH, "%s", "Plot panel");
     
     /* Calculation the position of the bottom-left corner of the Plot_Panel object */
     plot_panel->BL.x = info_panel->BL.x;
@@ -83,6 +83,6 @@ plot_panel_render(Plot_Panel_t *plot_panel, Font_t *font, Render_Buffer_t *rende
     /* Render the caption text */
     x += 15;
     y += 8;
-    font_draw_string(font, plot_panel->caption, plot_panel->width, x, y, 2, 0x000000, 
+    font_draw_string(font, plot_panel->caption, (s32)plot_panel->width, x, y, 2, 0x000000, 
         render_buffer);
 }
